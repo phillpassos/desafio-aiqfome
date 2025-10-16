@@ -23,7 +23,6 @@ export default new class ClienteController {
             return res.status(201).json(await ClienteService.createOrUpdate(cliente));
         }
         catch (error) {
-            console.log(error.message)
             return res.status(400).json({ error: 'Erro ao criar cliente', details: error.message || error });
         }
     }
