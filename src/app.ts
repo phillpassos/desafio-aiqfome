@@ -38,7 +38,11 @@ app.use((req, res, next) => {
 
 app.use('/api', routes);
 
-app.use('/swagger', swaggerUi.serve, swaggerUi.setup(swaggerFile));
+app.use('/swagger', swaggerUi.serve, (req, res, next) => {
+  const swdoc = { ...swaggerFile };
+  swdoc.host = req.get('host');
+  return swaggerUi.setup(swdoc)(req, res, next);
+});
 
 app.use((err, _, res, __) => {
   loggerHelper.error(err.stack);
