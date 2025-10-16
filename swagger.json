@@ -423,9 +423,14 @@
     "ProdutoFavoritoCreate": {
       "type": "object",
       "properties": {
-        "id": {
-          "type": "number",
-          "example": 1
+        "produto": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "number",
+              "example": 1
+            }
+          }
         }
       }
     },

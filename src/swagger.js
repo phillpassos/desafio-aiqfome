@@ -48,7 +48,9 @@ const doc = {
             rating: { $ref: '#/definitions/Rating' }
         },
         ProdutoFavoritoCreate: {
-            id: 1
+            produto: {
+                id: 1
+            }
         },
         Rating: {
             rate: 3.9,
