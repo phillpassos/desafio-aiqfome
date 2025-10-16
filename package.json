@@ -5,7 +5,7 @@
   "main": "src/main.ts",
   "scripts": {
     "dev": "nodemon --exec ts-node src/server.ts",
-    "build": "npm run prisma:pull && npm run prisma:generate && tsc",
+    "build": "npm run prisma:pull && npm run prisma:generate && npm run swagger && tsc",
     "start": "node dist/server.js",
     "prisma:generate": "prisma generate",
     "prisma:pull": "prisma db pull",
