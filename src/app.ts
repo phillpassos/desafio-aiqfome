@@ -2,6 +2,8 @@ import express, { Request, Response, NextFunction } from 'express';
 import routes from './routes';
 import jwtHelper from './helpers/jwt.helper';
 import loggerHelper from './helpers/logger.helper';
+import swaggerUi from 'swagger-ui-express';
+import swaggerFile from '../swagger.json';
 
 const app = express();
 
@@ -18,7 +20,7 @@ app.use((req, res, next) => {
   loggerHelper.log(`Requisição recebida: ${req.method} ${req.path}`);
   req.body && loggerHelper.log(`Payload: ${JSON.stringify(req.body)}`);
 
-  if(req.path.includes('/login')) return next();
+  if(req.path.includes('/login') || req.path.includes('/swagger')) return next();
 
   if (!req.headers["authorization"]) return res.status(401).json({message: "Não autorizado"}); // Unauthorized
 
@@ -35,6 +37,8 @@ app.use((req, res, next) => {
 });
 
 app.use('/api', routes);
+
+app.use('/swagger', swaggerUi.serve, swaggerUi.setup(swaggerFile));
 
 app.use((err, _, res, __) => {
   loggerHelper.error(err.stack);

@@ -6,6 +6,19 @@ export default new class AuthController {
     // passados pelo payload.
     // Em um cenário real, deveriamos autenticar por outro serviço ou validar o usuário e senha com um banco de dados.
     public async authorize(req: Request, res: Response) {
+        /*  #swagger.tags = ['Login']
+            #swagger.description = 'Gera um token JWT baseado nas informações enviadas'
+            #swagger.parameters['credenciais'] = {
+              in: 'body',
+              description: 'Objeto de credenciais',
+              required: true,
+              schema: { $ref: '#/definitions/Credenciais' }
+            }
+            #swagger.responses[200] = {
+              description: 'Token de acesso gerado',
+              schema: { $ref: '#/definitions/Token' }
+            }
+        */
         const {nome, email} = req.body;
         if(!nome || !email) return res.status(400).json({message: "Nome e email são obrigatórios"}); // Bad Request
         const token = await jwtHelper.generateToken({nome, email});

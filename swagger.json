@@ -1,0 +1,473 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "Aiqfome favoritos API",
+    "description": "",
+    "version": "1.0.0"
+  },
+  "host": "localhost:3000",
+  "basePath": "/api",
+  "schemes": [
+    "http"
+  ],
+  "securityDefinitions": {
+    "Bearer": {
+      "type": "apiKey",
+      "name": "Authorization",
+      "in": "header",
+      "description": "Insira o token JWT como: 'Bearer <token>'"
+    }
+  },
+  "paths": {
+    "/login/": {
+      "post": {
+        "tags": [
+          "Login"
+        ],
+        "description": "Gera um token JWT baseado nas informações enviadas",
+        "parameters": [
+          {
+            "name": "credenciais",
+            "in": "body",
+            "description": "Objeto de credenciais",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/Credenciais"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Token de acesso gerado",
+            "schema": {
+              "$ref": "#/definitions/Token"
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          }
+        }
+      }
+    },
+    "/clientes/": {
+      "post": {
+        "tags": [
+          "Clientes"
+        ],
+        "description": "Cria um novo cliente",
+        "parameters": [
+          {
+            "name": "cliente",
+            "in": "body",
+            "description": "Objeto Cliente",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/ClienteCreate"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Cliente criado",
+            "schema": {
+              "$ref": "#/definitions/Cliente"
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          }
+        },
+        "security": [
+          {
+            "Bearer": []
+          }
+        ]
+      },
+      "get": {
+        "tags": [
+          "Clientes"
+        ],
+        "description": "Obtem a lista de clientes",
+        "responses": {
+          "200": {
+            "description": "Lista de clientes",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Cliente"
+              },
+              "xml": {
+                "name": "main"
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "Bearer": []
+          }
+        ]
+      }
+    },
+    "/clientes/email/{email}": {
+      "get": {
+        "tags": [
+          "Clientes"
+        ],
+        "description": "Busca cliente por email",
+        "parameters": [
+          {
+            "name": "email",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "Email do cliente"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Cliente encontrado",
+            "schema": {
+              "$ref": "#/definitions/Cliente"
+            }
+          },
+          "400": {
+            "description": "Erro ao buscar cliente"
+          },
+          "404": {
+            "description": "Cliente não encontrado"
+          }
+        },
+        "security": [
+          {
+            "Bearer": []
+          }
+        ]
+      }
+    },
+    "/clientes/{id}": {
+      "put": {
+        "tags": [
+          "Clientes"
+        ],
+        "description": "Atualiza um cliente",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "integer",
+            "description": "ID do cliente"
+          },
+          {
+            "name": "cliente",
+            "in": "body",
+            "description": "Objeto Cliente",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/ClienteCreate"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Cliente atualizado",
+            "schema": {
+              "$ref": "#/definitions/Cliente"
+            }
+          },
+          "400": {
+            "description": "ID inválido ou erro de atualização"
+          }
+        },
+        "security": [
+          {
+            "Bearer": []
+          }
+        ]
+      },
+      "delete": {
+        "tags": [
+          "Clientes"
+        ],
+        "description": "Remove um cliente",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "integer",
+            "description": "ID do cliente"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Cliente removido"
+          },
+          "400": {
+            "description": "ID inválido"
+          },
+          "404": {
+            "description": "Cliente não encontrado"
+          }
+        },
+        "security": [
+          {
+            "Bearer": []
+          }
+        ]
+      }
+    },
+    "/favoritos/cliente/{idCliente}": {
+      "post": {
+        "tags": [
+          "Favoritos"
+        ],
+        "description": "Cria um favorito para um cliente",
+        "parameters": [
+          {
+            "name": "idCliente",
+            "in": "path",
+            "required": true,
+            "type": "integer",
+            "description": "ID do cliente"
+          },
+          {
+            "name": "produto",
+            "in": "body",
+            "description": "Produto a ser vinculado ao cliente",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/ProdutoFavoritoCreate"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Favorito criado",
+            "schema": {
+              "$ref": "#/definitions/Favorito"
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          }
+        },
+        "security": [
+          {
+            "Bearer": []
+          }
+        ]
+      },
+      "get": {
+        "tags": [
+          "Favoritos"
+        ],
+        "description": "Obtem os favoritos de um cliente",
+        "parameters": [
+          {
+            "name": "idCliente",
+            "in": "path",
+            "required": true,
+            "type": "integer",
+            "description": "ID do cliente"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Lista de favoritos",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Favorito"
+              },
+              "xml": {
+                "name": "main"
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          }
+        },
+        "security": [
+          {
+            "Bearer": []
+          }
+        ]
+      }
+    },
+    "/favoritos/{id}": {
+      "delete": {
+        "tags": [
+          "Favoritos"
+        ],
+        "description": "Remove um favorito por id",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "integer",
+            "description": "ID do favorito"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Favorito removido"
+          },
+          "400": {
+            "description": "Id inválido"
+          },
+          "404": {
+            "description": "Favorito não encontrado"
+          }
+        },
+        "security": [
+          {
+            "Bearer": []
+          }
+        ]
+      }
+    }
+  },
+  "definitions": {
+    "ClienteCreate": {
+      "type": "object",
+      "properties": {
+        "nome": {
+          "type": "string",
+          "example": "João Silva"
+        },
+        "email": {
+          "type": "string",
+          "example": "joao@exemplo.com"
+        }
+      }
+    },
+    "Cliente": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "number",
+          "example": 1
+        },
+        "nome": {
+          "type": "string",
+          "example": "João Silva"
+        },
+        "email": {
+          "type": "string",
+          "example": "joao@exemplo.com"
+        }
+      }
+    },
+    "FavoritoCreate": {
+      "type": "object",
+      "properties": {
+        "cliente": {
+          "$ref": "#/definitions/Cliente"
+        },
+        "produto": {
+          "$ref": "#/definitions/Produto"
+        }
+      }
+    },
+    "Favorito": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "number",
+          "example": 1
+        },
+        "cliente": {
+          "$ref": "#/definitions/Cliente"
+        },
+        "produto": {
+          "$ref": "#/definitions/Produto"
+        }
+      }
+    },
+    "Produto": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "number",
+          "example": 1
+        },
+        "title": {
+          "type": "string",
+          "example": "Fjallraven - Foldsack No. 1 Backpack, Fits 15 Laptops"
+        },
+        "price": {
+          "type": "number",
+          "example": 109.95
+        },
+        "description": {
+          "type": "string",
+          "example": "Your perfect pack for everyday use and walks in the forest. Stash your laptop (up to 15 inches) in the padded sleeve, your everyday"
+        },
+        "category": {
+          "type": "string",
+          "example": "men's clothing"
+        },
+        "image": {
+          "type": "string",
+          "example": "https://fakestoreapi.com/img/81fPKd-2AYL._AC_SL1500_t.png"
+        },
+        "rating": {
+          "$ref": "#/definitions/Rating"
+        }
+      }
+    },
+    "ProdutoFavoritoCreate": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "number",
+          "example": 1
+        }
+      }
+    },
+    "Rating": {
+      "type": "object",
+      "properties": {
+        "rate": {
+          "type": "number",
+          "example": 3.9
+        },
+        "count": {
+          "type": "number",
+          "example": 120
+        }
+      }
+    },
+    "Credenciais": {
+      "type": "object",
+      "properties": {
+        "nome": {
+          "type": "string",
+          "example": "admin"
+        },
+        "email": {
+          "type": "string",
+          "example": "admin@localhost.com"
+        }
+      }
+    },
+    "Token": {
+      "type": "object",
+      "properties": {
+        "token": {
+          "type": "string",
+          "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NjA1NzM5NDgsImRhdGEiOnsibm9tZSI6IlRFc3RlIiwiZW1haWwiOiJwaGlsbGlwQHRlc3RlLmNvbSJ9LCJpYXQiOjE3NjA1NzAzNDh9.FBz5bp2oX1P32AGV6E-VM65RkQ0OqyATjRvAVHs4Rvw"
+        }
+      }
+    }
+  },
+  "security": [
+    {
+      "Bearer": []
+    }
+  ]
+}
