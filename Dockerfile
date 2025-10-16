@@ -20,4 +20,4 @@ RUN npm install --omit=dev
 
 RUN npm run prisma:generate
 
-CMD ["node", "dist/server.js"]
+CMD ["node", "dist/src/server.js"]
