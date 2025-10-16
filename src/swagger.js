@@ -9,7 +9,6 @@ const doc = {
         title: 'Aiqfome favoritos API',
         description: ''
     },
-    host: `${process.env.HOST}:${process.env.PORT}`,
     basePath: '/api',
     securityDefinitions: {
         Bearer: {
