@@ -1,75 +1,150 @@
-Consideramos então que o problema é um micro serviço especifico
-Utilizaremos o express pelo minimalismo
+# Aiqfome — Serviço de Favoritos
 
-Utilizaremos o prisma para facilitar o acesso ao banco de dados e fazer um db-first
+Microserviço em Express + TypeScript para gerenciar clientes e seus produtos favoritos.
 
-endpoints - 
+- Backend minimalista usando Express
+- Banco de dados Postgresql
+- Acesso a banco via Prisma (db-first)
+- Documentação gerada com swagger-autogen e servida com swagger-ui-express
 
-  Clientes - 
-    Post
-    Get
-    Put
-    Delete
+---
 
-  Favoritos
-    Post
-    Delete
+## Sobre
 
-  Auth
-    Post - login - retorna um jwt
-    Delete - login - recebe o jwt e exclui
+Este microserviço expõe endpoints para:
 
-Estrutura = 
-  cliente
-    id - unique
-    nome
-    email - unique
+- CRUD de clientes (nome, email)
+- Gerenciar favoritos de clientes (associação a produtos externos)
+- Endpoints de autenticação (login) para gerar JWTs (exemplificativo)
 
-  Cliente - favorito
+O serviço foi pensado para ficar atrás de um gateway (NGINX, API Gateway), por isso não foram adicionados cabeçalhos especiais de segurança na documentação.
 
-    idfavorito - unique
-    idcliente - idProdutoExterno + idCliente = unique
-    idProdutoExterno - unique
+---
 
+## Modelos de dados (resumo)
 
-A api deve ter autenticação e autorização. Porem, no caso de um micro serviço, a verificação da autenticação deveria vir de outro lugar
-Vou criar um endpoint que gera um token jwt e um que remove, porem, no serviço deveria apenas haver um guard confirmando a autenticação, talvez diretamente num redis
-Utilizarei o sawgger-autogen para gerar a documentação baseado em comentario e o swagger-ui-express para gerar a interface
-Não irei adicionar cabeçalhos de segurança pois se tratando de um micro serviço, geralmente fica atras de um service discovery ou nginx
+- **clientes**
+  - id: SERIAL (PK, autoincrement)
+  - nome: String
+  - email: String (unique)
 
+- **favoritos**
+  - id: SERIAL (PK, autoincrement)
+  - id_cliente: Int (FK -> clientes.id)
+  - id_produto_externo: Int
 
+Regras importantes:
 
-Clientes
+- `email` é único entre clientes.
+- Um produto não pode estar duplicado na lista de favoritos do mesmo cliente (unique on [id_cliente, id_produto_externo]).
+- Favoritos retornam dados do produto (via API externa) com: id, título, imagem, preço e rating.
 
-Criar, visualizar, editar e remover clientes.
-Dados obrigatórios: nome e e-mail.
-Um mesmo e-mail não pode se repetir no cadastro.
-Favoritos
+---
 
-Um cliente deve ter uma lista de produtos favoritos.
-Os produtos devem ser validados via API externa (link fornecido abaixo).
-Um produto não pode ser duplicado na lista de um cliente.
-Produtos favoritos devem exibir: ID, título, imagem, preço e review (se houver).
-Requisitos de Integração
+## Endpoints (resumo)
 
- Sugerimos o uso de uma API genérica para buscar produtos. Porém, para facilitar a execução e deixar tudo mais direto ao ponto, recomendamos o uso da seguinte API pública:
+Base path: `/api` (o `app` monta as rotas em `/api`). Consulte `src/modules/*/*.routes.ts` para rotas exatas.
 
-🔗 https://fakestoreapi.com/docs
+### Clientes
 
-Você pode utilizar especificamente estes dois endpoints:
+- `POST /api/cliente` — criar cliente
+  - Body: `{ nome, email }` (nome e email obrigatórios)
+  - Resposta: 201 com cliente criado
 
-Listar todos os produtos:
-GET https://fakestoreapi.com/products
+- `GET /api/cliente` — listar clientes
 
-Buscar produto por ID:
-GET https://fakestoreapi.com/products/{id}
+- `PUT /api/cliente/:id` — atualizar cliente
 
-Confira algumas dicas aqui
-⚖️ Regras Gerais
+- `DELETE /api/cliente/:id` — remover cliente
 
-A API deve ser pública, mas conter autenticação e autorização.
-Evite duplicidade de dados.
-Estruture bem o código, seguindo boas práticas REST.
-Pense em performance e escalabilidade.
-Documente sua API (OpenAPI/Swagger é bem-vindo, mas opcional).
-Não use IA ou cópias. Será passível de eliminação.
+### Favoritos
+
+- `POST /api/favoritos/:idCliente` — adicionar favorito (idProdutoExterno no body)
+
+- `GET /api/favoritos/:idCliente` — listar favoritos de um cliente (retorna um array)
+
+- `DELETE /api/favoritos/:id` — remover favorito por id
+
+### Auth (exemplos)
+
+- `POST /api/auth` — login; retorna `{ token: '...' }`
+
+---
+
+## Autenticação e autorização
+
+- O projeto inclui exemplos de endpoints para emissão de JWTs.
+- Em produção recomenda-se que a autenticação seja verificada por um componente externo (gateway ou cache como Redis).
+O serviço atua como recurso protegido. Por conta disso, não entrei em muitos detalhes quanto a autenticação.
+
+---
+
+## Integração externa — Produtos
+
+Utilizada a API pública `https://fakestoreapi.com` para validar/obter detalhes de produtos.
+
+Endpoints:
+
+- `GET https://fakestoreapi.com/products` — listar todos
+- `GET https://fakestoreapi.com/products/{id}` — buscar por id
+
+---
+
+## Rodando localmente
+
+1. Instale dependências:
+
+```cmd
+npm install
+```
+
+2. Gere o Prisma Client (essencial):
+
+  - Restaure o arquivo de dump (postgresql/aiqfome-dump.sql) ou rode os comandos SQL do arquivo aiqfome-favoritos.sql no banco de dados e schema de sua escolha
+  - Altere no arquivo .env a variável DATABASE_URL, informando o domínio, banco e schema do banco postgres a ser utilizado
+```cmd
+npm install @prisma/client
+npx prisma generate
+```
+
+3. Em desenvolvimento:
+
+```cmd
+npm run dev
+```
+
+4. Build/Start:
+
+```cmd
+npm run build
+npm start
+```
+
+---
+
+## Documentação (Swagger)
+
+- Gerador: `src/swagger.js` (usa `swagger-autogen`)
+- Saída: `swagger.json` (gerado pelo script)
+- UI: `swagger-ui-express` (montada em `/swagger`)
+
+Gerar a documentação:
+
+```cmd
+node src/swagger.js
+```
+
+---
+
+## Docker / Make
+
+O repositório inclui um `Makefile` com target `local` para build e run em Docker.
+
+Exemplo manual:
+
+```cmd
+docker build -t aiqfome-favoritos-backend:latest .
+docker run -d --name aiqfome-favoritos-backend -p 3000:3000 aiqfome-favoritos-backend:latest
+```
+
+Use `make local` para executar a sequência definida no `Makefile`.

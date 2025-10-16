@@ -23,7 +23,8 @@ export default new class ClienteController {
             return res.status(201).json(await ClienteService.createOrUpdate(cliente));
         }
         catch (error) {
-            return res.status(400).json({ error: 'Erro ao criar cliente', details: error });
+            console.log(error.message)
+            return res.status(400).json({ error: 'Erro ao criar cliente', details: error.message || error });
         }
     }
 
@@ -68,7 +69,7 @@ export default new class ClienteController {
             return res.json(cliente);
         }
         catch (error) {
-            return res.status(400).json({ error: 'Erro ao buscar cliente', details: error });
+            return res.status(400).json({ error: 'Erro ao buscar cliente', details: error.message || error });
         }
     }
 
@@ -103,7 +104,7 @@ export default new class ClienteController {
             return res.json(await ClienteService.createOrUpdate(cliente));
         }
         catch (error) {
-            return res.status(400).json({ error: 'Erro ao atualizar cliente', details: error });
+            return res.status(400).json({ error: 'Erro ao atualizar cliente', details: error.message || error });
         }
     }
 

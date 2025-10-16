@@ -3,6 +3,14 @@ import prisma from '../../helpers/prisma';
 
 export default class ClienteRepository {
     static async create(cliente: ClienteDomain) {
+
+        const dupe = await prisma.clientes.findUnique({
+            where: { email: cliente.email }
+        });
+        if (dupe) {
+            throw new Error('Cliente com este email já existe');
+        }
+
         return prisma.clientes.create({
             data: cliente
         });

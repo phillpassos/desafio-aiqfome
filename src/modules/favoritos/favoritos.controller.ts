@@ -33,7 +33,7 @@ export default new class FavoritosController {
             return res.json(await FavoritosService.create(favorito));
         }
         catch (error) {
-            return res.status(400).json({ error: 'Erro ao criar favorito', details: error });
+            return res.status(400).json({ error: 'Erro ao criar favorito', details: error.message || error });
         }
     }
 
@@ -60,7 +60,7 @@ export default new class FavoritosController {
             return res.json(await FavoritosService.findByIdCliente(Number(idCliente)));
         }
         catch (error) {
-            return res.status(400).json({ error: 'Erro ao buscar favoritos', details: error });
+            return res.status(400).json({ error: 'Erro ao buscar favoritos', details: error.message || error });
         }
     }
 

@@ -7,6 +7,17 @@ export default class FavoritosRepository {
     static async create(favorito: FavoritosDomain) {
         const { produto, cliente } = favorito;
 
+        const dupe = await prisma.favoritos.findFirst({
+            where: {
+                id_cliente: cliente.id,
+                id_produto_externo: produto.id,
+            }
+        });
+        
+        if (dupe) {
+            throw new Error('Favorito já existe para este cliente e produto');
+        }
+
         return prisma.favoritos.create({
             data: {
                 id_cliente: cliente.id,

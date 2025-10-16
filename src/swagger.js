@@ -19,8 +19,6 @@ const doc = {
             description: "Insira o token JWT como: 'Bearer <token>'"
         }
     },
-    // opcional: aplica auth globalmente. Remova se quiser aplicar por rota.
-    security: [{ Bearer: [] }],
     definitions: {
         ClienteCreate: {
             nome: 'João Silva',
