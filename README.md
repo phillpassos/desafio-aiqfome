@@ -2,10 +2,11 @@
 
 Microserviço em Express + TypeScript para gerenciar clientes e seus produtos favoritos.
 
-- Backend minimalista usando Express
+- Backend minimalista usando Express (Nodejs 22.15.0)
 - Banco de dados Postgresql
 - Acesso a banco via Prisma (db-first)
 - Documentação gerada com swagger-autogen e servida com swagger-ui-express
+- Testes unitários utilizando jest
 
 ---
 
@@ -24,12 +25,12 @@ O serviço foi pensado para ficar atrás de um gateway (NGINX, API Gateway), por
 ## Modelos de dados (resumo)
 
 - **clientes**
-  - id: SERIAL (PK, autoincrement)
+  - id: SERIAL (PK)
   - nome: String
   - email: String (unique)
 
 - **favoritos**
-  - id: SERIAL (PK, autoincrement)
+  - id: SERIAL (PK)
   - id_cliente: Int (FK -> clientes.id)
   - id_produto_externo: Int
 
@@ -48,8 +49,6 @@ Base path: `/api` (o `app` monta as rotas em `/api`). Consulte `src/modules/*/*.
 ### Clientes
 
 - `POST /api/cliente` — criar cliente
-  - Body: `{ nome, email }` (nome e email obrigatórios)
-  - Resposta: 201 com cliente criado
 
 - `GET /api/cliente` — listar clientes
 
@@ -59,9 +58,9 @@ Base path: `/api` (o `app` monta as rotas em `/api`). Consulte `src/modules/*/*.
 
 ### Favoritos
 
-- `POST /api/favoritos/:idCliente` — adicionar favorito (idProdutoExterno no body)
+- `POST /api/favoritos/cliente/:idCliente` — adicionar favorito (idProdutoExterno no body)
 
-- `GET /api/favoritos/:idCliente` — listar favoritos de um cliente (retorna um array)
+- `GET /api/favoritos/cliente/:idCliente` — listar favoritos de um cliente (retorna um array)
 
 - `DELETE /api/favoritos/:id` — remover favorito por id
 
@@ -73,7 +72,7 @@ Base path: `/api` (o `app` monta as rotas em `/api`). Consulte `src/modules/*/*.
 
 ## Autenticação e autorização
 
-- O projeto inclui exemplos de endpoints para emissão de JWTs.
+- O projeto inclui exemplo de endpoint para emissão de JWTs.
 - Em produção recomenda-se que a autenticação seja verificada por um componente externo (gateway ou cache como Redis).
 O serviço atua como recurso protegido. Por conta disso, não entrei em muitos detalhes quanto a autenticação.
 
@@ -101,7 +100,7 @@ npm install
 2. Gere o Prisma Client (essencial):
 
   - Restaure o arquivo de dump (postgresql/aiqfome-dump.sql) ou rode os comandos SQL do arquivo aiqfome-favoritos.sql no banco de dados e schema de sua escolha
-  - Altere no arquivo .env a variável DATABASE_URL, informando o domínio, banco e schema do banco postgres a ser utilizado
+  - Altere no arquivo .env a variável DATABASE_URL informando o domínio, banco e schema postgres a ser utilizado
 ```cmd
 npm install @prisma/client
 npx prisma generate
@@ -131,7 +130,28 @@ npm start
 Gerar a documentação:
 
 ```cmd
+npm run swagger
+```
+ou
+
+```cmd
 node src/swagger.js
+```
+
+---
+
+## Testes unitários (Jest)
+
+Existem dois arquivos para exemplificar os testes unitários
+  - ClienteRepository (cliente.repository.spec.ts)
+  - ClienteModel (cliente.model.spec.ts)
+
+No ClienteRepository o método create é validado e no ClienteModel o teste é no validador de email.
+São apenas exemplos de como os testes unitários funcionam.
+
+Para rodar os testes ou adicionar em um CI/CD:
+```cmd
+npm test
 ```
 
 ---
@@ -148,3 +168,5 @@ docker run -d --name aiqfome-favoritos-backend -p 3000:3000 aiqfome-favoritos-ba
 ```
 
 Use `make local` para executar a sequência definida no `Makefile`.
+
+> IMPORTANTE: Caso utilize utilize o docker / make, não esqueça de alterar no arquivo .env o caminho do postgresql antes
