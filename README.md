@@ -9,6 +9,22 @@ Microserviço em Express + TypeScript para gerenciar clientes e seus produtos fa
 - Testes unitários utilizando jest
 
 ---
+ 
+<a id="index"></a>
+## Índice
+
+- [Sobre](#sobre)
+- [Modelos de dados (resumo)](#modelos-de-dados-resumo)
+- [Endpoints (resumo)](#endpoints-resumo)
+  - [Clientes](#clientes)
+  - [Favoritos](#favoritos)
+  - [Auth (exemplos)](#auth-exemplos)
+- [Autenticação e autorização](#anchor-autenticacao)
+- [Integração externa — Produtos](#anchor-integracao)
+- [Rodando localmente](#rodando-localmente)
+- [Documentação (Swagger)](#anchor-documentacao)
+- [Testes unitários (Jest)](#anchor-testes)
+- [Docker / Make](#docker--make)
 
 ## Sobre
 
@@ -58,6 +74,8 @@ Base path: `/api` (o `app` monta as rotas em `/api`). Consulte `src/modules/*/*.
 
 ### Favoritos
 
+<p align="right"><a href="#index">🔝 Voltar ao Índice</a></p>
+
 - `POST /api/favoritos/cliente/:idCliente` — adicionar favorito (idProdutoExterno no body)
 
 - `GET /api/favoritos/cliente/:idCliente` — listar favoritos de um cliente (retorna um array)
@@ -70,6 +88,7 @@ Base path: `/api` (o `app` monta as rotas em `/api`). Consulte `src/modules/*/*.
 
 ---
 
+<a id="anchor-autenticacao"></a>
 ## Autenticação e autorização
 
 - O projeto inclui exemplo de endpoint para emissão de JWTs.
@@ -78,6 +97,7 @@ O serviço atua como recurso protegido. Por conta disso, não entrei em muitos d
 
 ---
 
+<a id="anchor-integracao"></a>
 ## Integração externa — Produtos
 
 Utilizada a API pública `https://fakestoreapi.com` para validar/obter detalhes de produtos.
@@ -90,6 +110,8 @@ Endpoints:
 ---
 
 ## Rodando localmente
+
+<p align="right"><a href="#index">🔝 Voltar ao Índice</a></p>
 
 1. Instale dependências:
 
@@ -121,7 +143,10 @@ npm start
 
 ---
 
+<a id="anchor-documentacao"></a>
 ## Documentação (Swagger)
+
+<p align="right"><a href="#index">🔝 Voltar ao Índice</a></p>
 
 - Gerador: `src/swagger.js` (usa `swagger-autogen`)
 - Saída: `swagger.json` (gerado pelo script)
@@ -140,6 +165,7 @@ node src/swagger.js
 
 ---
 
+<a id="anchor-testes"></a>
 ## Testes unitários (Jest)
 
 Existem dois arquivos para exemplificar os testes unitários
@@ -157,6 +183,8 @@ npm test
 ---
 
 ## Docker / Make
+
+<p align="right"><a href="#index">🔝 Voltar ao Índice</a></p>
 
 O repositório inclui um `Makefile` com target `local` para build e run em Docker.
 
