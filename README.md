@@ -102,6 +102,8 @@ O serviço atua como recurso protegido. Por conta disso, não entrei em muitos d
 
 Utilizada a API pública `https://fakestoreapi.com` para validar/obter detalhes de produtos.
 
+Não estão sendo armazenados os dados dos produtos, além dos ids, uma vez que seria necessário a atualização constante dos mesmos
+
 Endpoints:
 
 - `GET https://fakestoreapi.com/products` — listar todos
